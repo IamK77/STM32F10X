@@ -17,7 +17,7 @@
 - 由于Github的特殊原因, 不使用魔法上网可能不会加载图片, 建议下载本地阅读
 - 边读边写试试
 
-## Install
+## Download
 
 在Github页面中点击绿色的Code按钮, 然后点击Download ZIP下载本项目
 
