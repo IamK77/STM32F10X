@@ -12,12 +12,18 @@
 
 ## 阅读建议
 
-- 建议使用Vscode打开Markdowm预览阅读
+- 建议使用Vscode打开Markdowm预览阅读(右上角点击侧边预览)
 - 或使用Typora, Obsidian等Markdown编辑器阅读
 - 由于Github的特殊原因, 不使用魔法上网可能不会加载图片, 建议下载本地阅读
 - 边读边写试试
+- 如果访问Github比较慢, 可以使用[Watt Toolkit](https://steampp.net/)(原Steam++)加速
+- 提供[C语言基础语法文档](https://github.com/IamK77/note/blob/master/C/cnote.md)以供查阅, 如果这都看不懂, 那我还是那句话
 
-## Install
+    ✋🤚菜就多练，✋🤚，学不会就别玩，✋🤚，以前是以前✋🤚，现在是现在✋🤚，你要是一直拿以前当作现在✋🤚，哥们，你怎么不拿你出生的时候对比啊✋🤚
+
+    <img src="./Docs/Resource/菜就多练.jpg" width=150>
+
+## Download
 
 在Github页面中点击绿色的Code按钮, 然后点击Download ZIP下载本项目
 

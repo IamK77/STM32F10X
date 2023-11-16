@@ -1,6 +1,6 @@
 # First_LED
 
-该项目将点亮开发板上的一个LED灯
+该例程将点亮开发板上的一个LED灯
 
 例程: [Frist_LED](./../../src/Standard_Lib/First_LED/)
 
@@ -168,6 +168,12 @@ GPIO_Init(LED_PORT, &gpioDef);   // 初始化GPIO
 视频已精确定位到推挽输出的部分, 大约看两分钟就行
 
 不那么严谨的说白了就是, 我们给控制器一个高电平, 小灯/元器件就接到3.3v, 我们给控制器一个低电平, 它就接到一个0v亮不起来
+
+*注: 高电平代表1, 低电平代表0, 可以简单的理解为高电平的时候给电, 低电平的时候不给电, 高电平开, 低电平关*
+
+<img src="./../Resource/HighnLow.png"/>
+
+*如上图, 波高为高电平, 波低为低电平, 从1到0为下降沿, 从0到1为上升沿*
 
 接下来看`RCC_APB2PeriphClockCmd(LED_PERIPH, ENABLE);`
 
