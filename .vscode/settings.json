@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "*.vue": "html",
+        "*.uvprojx": "arm",
+        "stm32f10x.h": "c"
+    }
+}

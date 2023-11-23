@@ -31,8 +31,6 @@ void delay(int x)
 
 int main()
 {
-    TIM2_Init();
-
     GPIO_InitTypeDef gpioDef_led;
     GPIO_InitTypeDef gpioDef_key;
     RCC_APB2PeriphClockCmd(LED_PERIPH, ENABLE);
