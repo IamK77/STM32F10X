@@ -5,7 +5,8 @@
   "srcDirs": [
     ".eide/deps",
     "src",
-    "hal"
+    "hal",
+    "../Timer"
   ],
   "outDir": "build",
   "deviceName": "STM32F102C8",

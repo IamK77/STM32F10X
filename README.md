@@ -70,5 +70,7 @@ git pull https://github.com/IamK77/STM32F10X.git
 
 ## 鸣谢
 
+- [EIDE](https://github.com/github0null/eide) 提供了一个非常好用的IDE
 - [keysking](https://space.bilibili.com/6100925)的教学视频
 - [threekb](https://space.bilibili.com/3493142393260061)的环境搭建视频
+- [小k撸电机](https://www.bilibili.com/video/BV15S4y1g7WT)的人话教学视频

@@ -14,6 +14,10 @@
 #define LED_PORT GPIOA
 #define LED_PIN GPIO_Pin_1
 
+#define KEY_PERIPH RCC_APB2Periph_GPIOA
+#define KEY_PORT GPIOA
+#define KEY_PIN GPIO_Pin_2
+
 
 void TIM2_Init(void)
 {
@@ -31,6 +35,26 @@ void TIM2_Init(void)
     TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
     TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);
     TIM_Cmd(TIM2, ENABLE);
+}
+
+void GPIO_Pin_Init(void)
+{
+    GPIO_InitTypeDef gpioDef_PP;
+    GPIO_InitTypeDef gpioDef_IPU;
+
+    RCC_APB2PeriphClockCmd(LED_PERIPH, ENABLE);
+    RCC_APB2PeriphClockCmd(KEY_PERIPH, ENABLE);
+
+    gpioDef_PP.GPIO_Mode = GPIO_Mode_Out_PP;
+    gpioDef_PP.GPIO_Pin = LED_PIN;
+    gpioDef_PP.GPIO_Speed = GPIO_Speed_10MHz;
+
+    gpioDef_IPU.GPIO_Mode = GPIO_Mode_IPU;  
+    gpioDef_IPU.GPIO_Pin = KEY_PIN;
+    gpioDef_IPU.GPIO_Speed = GPIO_Speed_10MHz;
+
+    GPIO_Init(LED_PORT, &gpioDef_PP);
+    GPIO_Init(KEY_PORT, &gpioDef_IPU);
 }
 
 void delay_us(uint32_t us)
@@ -55,13 +79,7 @@ void delay_ms(uint32_t ms)
 int main()
 {
     TIM2_Init();
-    
-    GPIO_InitTypeDef gpioDef;
-    RCC_APB2PeriphClockCmd(LED_PERIPH, ENABLE);
-    gpioDef.GPIO_Mode = GPIO_Mode_Out_PP;
-    gpioDef.GPIO_Pin = LED_PIN;
-    gpioDef.GPIO_Speed = GPIO_Speed_10MHz;
-    GPIO_Init(LED_PORT, &gpioDef);
+    GPIO_Pin_Init();
 
     while (1)
     { 
@@ -82,6 +100,8 @@ int main()
 
 这里我们先来理清什么叫定时器
 
+参考视频: [人话讲定时器](https://www.bilibili.com/video/BV15S4y1g7WT)
+
 ### 定时器
 
 stm32有以下几个定时器
@@ -99,13 +119,13 @@ stm32有以下几个定时器
 
 其中高级定时器 > 通用定时器 > 基本定时器, 上级定时器拥有下级定时器的所有功能, 我们这里以通用定时器为例子
 
-### 时钟源
+#### 时钟源
 
 定时器的时钟源有数种, 我们只以白话讲解, 不做细究
 
 stm32拥有内部时钟源就犹如我们人体拥有心脏, 但不同的是, stm32的心脏跳动频率为72MHz, 也就是说, 每秒钟会跳动72000000次
 
-### 时基单元
+#### 时基单元
 
 通用定时器的本质就是计数器
 
@@ -119,11 +139,11 @@ stm32拥有内部时钟源就犹如我们人体拥有心脏, 但不同的是, st
 
 这里我们简称他们为`arr`, `psc`, `cnt`
 
-### 计数
+#### 计数
 
 `cnt`会计算“心脏”一共跳了多少下, 但是, 由于`cnt`是一个16位的寄存器, 因此, `cnt`的最大值为2的16次方, 也就是65535, 当`cnt`达到65535时, 会到达极限, 无法再计数, 但是, “心脏” 每秒就跳动72000000次, 65535这个数字对于“心脏”来说, 只是一个瞬间, 因此, `psc`就应运而生
 
-### 分频
+#### 分频
 
 `psc`的作用就是将“心脏”跳动的频率降低, 降低到`cnt`可以计数的范围内, 也就是说, `psc`的值越大, “心脏”跳动的频率就越低, `cnt`就可以计数的越久
 
@@ -156,7 +176,7 @@ stm32拥有内部时钟源就犹如我们人体拥有心脏, 但不同的是, st
 
 因此, 我们可以通过`psc`的值来将“心跳”的频率降低到1MHz, 再交由cnt计数
 
-### 溢出计时
+#### 溢出计时
 
 我们将`arr`的值设为`100`, 那么`cnt`会每当到达`100`时, 再给`cnt`一次信号, 那么`cnt`会清零, 并产生一个更新中断
 
@@ -164,8 +184,121 @@ stm32拥有内部时钟源就犹如我们人体拥有心脏, 但不同的是, st
 
 如果我们不设置`arr`的值, 那么`cnt`会一直计数, 直到达到极限, 然后归零, 重新计数, 无事发生
 
-### 流程
+#### 流程
 
 综上, 整个流程如下
 
-    心脏 -> 72000000次信号 -> psc(71) -> 1000000
+    心脏 -> 72000000次信号 -> psc(71) -> 1000000次信号 -> cnt -> arr(1000) -> 每计数到1000次信号触发一次更新中断
+
+心脏由每秒72000000次降频为每秒1000000次, 再由`arr`进行溢出计时, 每1/1000秒触发一次更新中断, 也就是每1ms触发一次更新中断
+
+### 代码部分
+
+回到代码部分来
+
+#### 初始化
+
+首先, 我们需要初始化定时器, 使其能够正常工作
+
+```c
+void TIM2_Init(void)
+{
+    TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
+
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
+    TIM_TimeBaseStructure.TIM_Period = 65535;
+    TIM_TimeBaseStructure.TIM_Prescaler = (SystemCoreClock / 1000000) - 1; 
+    TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
+    TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+    TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);
+    TIM_Cmd(TIM2, ENABLE);
+}
+```
+
+这里我们使用了`TIM_TimeBaseInitTypeDef`结构体, 该结构体定义在`stm32f10x_tim.h`中, 用于初始化定时器
+
+该结构体有以下几个成员, 其中有俩分别对应上面的`arr`, `psc`
+
+- TIM_Period: `arr`的值
+
+- TIM_Prescaler: `psc`的值
+
+- TIM_ClockDivision: 时钟分频因子, 一般设为`TIM_CKD_DIV1`
+
+- TIM_CounterMode: 计数模式, 一般设为`TIM_CounterMode_Up`
+
+这里的`SystemCoreClock`是一个宏, 用于获取系统时钟频率，即“心脏”, 该宏定义在`stm32f10x.h`中，在我们的开发板中，该宏的值为72000000
+
+arr设为65535, 这能让它一直计数
+
+其余部分与之前所讲的类似不再赘述
+
+#### 延时
+
+```c
+void delay_us(uint32_t us)
+{
+    /* 
+     * 这里进行延时
+     * 用us参数来计数
+     * 每次计数就设cnt为0
+     * 循环等待cnt达到us
+     * 如果us为1000, 那么就是1000us = 1ms
+     */
+    TIM_SetCounter(TIM2, 0);    // 将cnt清零
+    while (TIM_GetCounter(TIM2) < us);  // 阻塞等待cnt达到设定的us的值
+}
+
+void delay_ms(uint32_t ms)
+{
+    for(uint32_t i=0; i<ms; i++)
+        delay_us(1000);     // 封装delay_us函数, 用于延时1ms
+}
+```
+
+这里我们使用了`TIM_SetCounter`和`TIM_GetCounter`函数, 用于设置和获取计数器的值
+
+下面给出这俩函数的文档
+
+**TIM_SetCounter**
+
+设置TIMx的CNT寄存器的值
+
+**原型**
+
+```c
+void TIM_SetCounter(TIM_TypeDef* TIMx, uint16_t Counter);
+```
+
+**参数**
+
+- TIMx: TIMx，x=1,2,3,4,5,6,7,8
+
+- Counter: 要设置的值
+
+**返回值**
+
+无
+
+**TIM_GetCounter**
+
+获取TIMx的CNT寄存器的值
+
+**原型**
+
+```c
+uint16_t TIM_GetCounter(TIM_TypeDef* TIMx);
+```
+
+**参数**
+
+- TIMx: TIMx，x=1,2,3,4,5,6,7,8
+
+**返回值**
+
+CNT寄存器的值
+
+
+至此, 我们就完成了一次丑陋的计时
+
+在之后的例程中, 将使用更加优雅的代码结构来完成讲解

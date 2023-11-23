@@ -4,7 +4,8 @@
  *              STM32 blink gcc demo
  * 
  *  CPU: STM32F103C8
- *  PIN: PA1
+ *  PIN: PA2 -> KEY
+ *      PA1 -> LED
  * 
  * ************************************************
 */
@@ -15,6 +16,10 @@
 #define LED_PERIPH RCC_APB2Periph_GPIOA
 #define LED_PORT GPIOA
 #define LED_PIN GPIO_Pin_1
+
+#define KEY_PERIPH RCC_APB2Periph_GPIOA
+#define KEY_PORT GPIOA
+#define KEY_PIN GPIO_Pin_2
 
 
 void TIM2_Init(void)
@@ -33,6 +38,26 @@ void TIM2_Init(void)
     TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
     TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);
     TIM_Cmd(TIM2, ENABLE);
+}
+
+void GPIO_Pin_Init(void)
+{
+    GPIO_InitTypeDef gpioDef_PP;
+    GPIO_InitTypeDef gpioDef_IPU;
+
+    RCC_APB2PeriphClockCmd(LED_PERIPH, ENABLE);
+    RCC_APB2PeriphClockCmd(KEY_PERIPH, ENABLE);
+
+    gpioDef_PP.GPIO_Mode = GPIO_Mode_Out_PP;
+    gpioDef_PP.GPIO_Pin = LED_PIN;
+    gpioDef_PP.GPIO_Speed = GPIO_Speed_10MHz;
+
+    gpioDef_IPU.GPIO_Mode = GPIO_Mode_IPU;  
+    gpioDef_IPU.GPIO_Pin = KEY_PIN;
+    gpioDef_IPU.GPIO_Speed = GPIO_Speed_10MHz;
+
+    GPIO_Init(LED_PORT, &gpioDef_PP);
+    GPIO_Init(KEY_PORT, &gpioDef_IPU);
 }
 
 void delay_us(uint32_t us)
@@ -57,13 +82,7 @@ void delay_ms(uint32_t ms)
 int main()
 {
     TIM2_Init();
-    
-    GPIO_InitTypeDef gpioDef;
-    RCC_APB2PeriphClockCmd(LED_PERIPH, ENABLE);
-    gpioDef.GPIO_Mode = GPIO_Mode_Out_PP;
-    gpioDef.GPIO_Pin = LED_PIN;
-    gpioDef.GPIO_Speed = GPIO_Speed_10MHz;
-    GPIO_Init(LED_PORT, &gpioDef);
+    GPIO_Pin_Init();
 
     while (1)
     { 

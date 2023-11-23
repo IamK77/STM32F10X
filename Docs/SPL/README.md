@@ -12,7 +12,13 @@
 
 或者在`EIDE`的项目资源中点击`添加源文件夹`, 选择`src/Standard_Lib/`中的例程文件夹即可
 
+<video width="1920" height="1080" controls>
+  <source src="./../Resource/example.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 ## 项目讲解
 
 - [Frist_LED](First_LED.md)
 - [Button](Button.md)
+- [Timer](Timer.md)

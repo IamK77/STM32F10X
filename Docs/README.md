@@ -6,6 +6,8 @@
 
 本文旨在快速上手, 用词不会太严谨
 
+本文档针对代码, 所使用代码对所有开发环境/IDE均通用, 无论是`Keil`, `IAR`, `EIDE`还是其他IDE
+
 ## 开发须知
 
 stm32的开发分为`标准库`和`HAL`两种，请根据自己的情况选择
@@ -190,19 +192,22 @@ int calc(int a, int b, char op) {
 
   - [Frist_LED](./SPL/First_LED.md)
   - [Button](./SPL/Button.md)
+  - [Timer](./SPL/Timer.md)
 
 - [`HAL`](./HAL/README.md)(待补充)
+  - [主讲HAL，但是无论学习HAL还是标准库都值得去看的视频](https://www.bilibili.com/video/BV12v4y1y7uV)
 
 
 ## TODO
 
-- Timer
 - Interrupt
 - PWM
+- ADC
 
 
 ## Update
-
+- 2023.11.23
+  - 新增`Timer`例程
 - 2023.11.16
   - 新增`Button`例程
   - 新增`Update`
