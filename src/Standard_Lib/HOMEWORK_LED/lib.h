@@ -80,9 +80,15 @@ void LED_TEN_TIMES()
 {
     for (int i = 0; i < 5; i++)
     {
-        LED_ON();
+        for (int j = 0; j < 4; j++)
+        {
+            LED_ON(j);
+        }
         delay(1000);
-        LED_OFF();
+        for (int j = 0; j < 4; j++)
+        {
+            LED_OFF(j);
+        }
         delay(1000);
     }
 
