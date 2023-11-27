@@ -24,7 +24,7 @@ void LED_Init()
 }
 
 /* ------------------- Timer ----------------------*/
-void TIM2_Init()
+void TIM2_Init(void)
 {
     TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
 
@@ -51,54 +51,32 @@ void delay(uint32_t ms)
 }
 
 /* ------------------- Funtion ----------------------*/
-void LED_ON(int i) {
-    GPIO_WriteBit(LED_PORT, ledPin[i], Bit_SET);
-}
+void LED_ON(int wait) { for (int i = 0; i < 4; i++) { GPIO_WriteBit(LED_PORT, ledPin[i], Bit_SET); delay(wait); } }
 
-void LED_OFF(int i) {
-    GPIO_WriteBit(LED_PORT, ledPin[i], Bit_RESET);
-}
+void LED_OFF(int wait) { for (int i = 0; i < 4; i++) { GPIO_WriteBit(LED_PORT, ledPin[i], Bit_RESET); delay(wait); } }
 
 void LED_Gradually()
 {
-    for (int i = 0; i < 4; i++)
-    {
-        LED_ON(i);
-        delay(1000);
-    }
-
+    LED_ON(1000);
     delay(5000);
-
-    for (int i = 0; i < 4; i++)
-    {
-        LED_OFF(i);
-        delay(1000);
-    }
+    LED_OFF(1000);
 }
 
 void LED_TEN_TIMES()
 {
     for (int i = 0; i < 5; i++)
     {
-        for (int j = 0; j < 4; j++)
-        {
-            LED_ON(j);
-        }
+        LED_ON(0);
         delay(1000);
-        for (int j = 0; j < 4; j++)
-        {
-            LED_OFF(j);
-        }
+        LED_OFF(0);
         delay(1000);
     }
-
-    delay(4000);
 }
 
 void LED_ONLE_ZERO_AND_ONE_ON()
 {
-    LED_ON(0);
-    LED_ON(1);
+    GPIO_WriteBit(LED_PORT, ledPin[0], Bit_SET);
+    GPIO_WriteBit(LED_PORT, ledPin[1], Bit_SET);
     delay(5000);
 }
 
@@ -106,7 +84,7 @@ void LED_END()
 {
     for (int i = 0; i < 4; i++)
     {
-        LED_OFF(i);
+        GPIO_WriteBit(LED_PORT, ledPin[i], Bit_RESET);
     }
     delay(3000); // keep silence 3s
 }
