@@ -82,9 +82,6 @@ void LED_ONLE_ZERO_AND_ONE_ON()
 
 void LED_END()
 {
-    for (int i = 0; i < 4; i++)
-    {
-        GPIO_WriteBit(LED_PORT, ledPin[i], Bit_RESET);
-    }
+    LED_OFF(0);
     delay(3000); // keep silence 3s
 }
