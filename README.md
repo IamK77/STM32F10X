@@ -23,7 +23,6 @@
 
     <img src="./Docs/Resource/菜就多练.jpg" width=150>
 
-
 ## Download
 
 在Github页面中点击绿色的Code按钮, 然后点击Download ZIP下载本项目, 或点击[此处](https://github.com/IamK77/STM32F10X/archive/refs/heads/main.zip)
@@ -43,6 +42,7 @@ git pull https://github.com/IamK77/STM32F10X.git
 ## 项目结构
 
 ```bash
+vscode_eide
 ├─.vscode
 ├─Docs
 ├─.gitignore

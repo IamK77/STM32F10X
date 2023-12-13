@@ -11,7 +11,8 @@
             "executable": "build\\Debug\\Project.elf",
             "runToMain": true,
             "device": "STM32F103C8",
-            "toolchainPrefix": "arm-none-eabi"
+            "toolchainPrefix": "arm-none-eabi",
+            "svdFile": ".pack/Keil/STM32F1xx_DFP.2.3.0/SVD/STM32F103xx.svd"
         },
         {
             "cwd": "${workspaceRoot}",
